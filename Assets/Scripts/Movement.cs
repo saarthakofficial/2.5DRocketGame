@@ -10,6 +10,10 @@ public class Movement : MonoBehaviour
     AudioSource audioSource;
     [SerializeField] float mainThrust = 1000f;
     [SerializeField] float rotationThrust = 100f;
+    [SerializeField] AudioClip mainEngine;
+    [SerializeField] ParticleSystem mainBooster;
+    [SerializeField] ParticleSystem leftBooster;
+    [SerializeField] ParticleSystem rightBooster;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -21,36 +25,64 @@ public class Movement : MonoBehaviour
     {
         ProcessThrust();
         ProcessRotation();
-        
+
     }
 
-    void ProcessThrust(){
-        if (Input.GetKeyDown(KeyCode.Space)){
+    void ProcessThrust()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
             audioSource.Stop();
         }
-        if (Input.GetKey(KeyCode.Space)){
+        if (Input.GetKey(KeyCode.Space))
+        {
             rb.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
 
             audioSource.volume = 1;
-            
-            if (!audioSource.isPlaying){
-                audioSource.Play();
+
+            if (!audioSource.isPlaying)
+            {
+
+                audioSource.PlayOneShot(mainEngine);
+            }
+            if (!mainBooster.isPlaying)
+            {
+                mainBooster.Play();
             }
         }
-        if (Input.GetKeyUp(KeyCode.Space)){
-            audioSource.volume = 0;
-            
+        else
+        {
+            mainBooster.Stop();
+            IEnumerator fadeSound1 = Movement.FadeOut(audioSource, 0.1f);
+            StartCoroutine(fadeSound1);
+            StopCoroutine(fadeSound1);
         }
-        
+
     }
-    
-    void ProcessRotation(){
+
+    void ProcessRotation()
+    {
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
             ApplyRotation(rotationThrust);
+            if (!leftBooster.isPlaying)
+            {
+                leftBooster.Play();
+            }
+            
         }
-        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)){
+        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+        {
             ApplyRotation(-rotationThrust);
+            if (!rightBooster.isPlaying)
+            {
+                rightBooster.Play();
+            }
+            
+        }
+        else{
+            leftBooster.Stop();
+            rightBooster.Stop();
         }
     }
 
@@ -60,10 +92,24 @@ public class Movement : MonoBehaviour
         transform.Rotate(Vector3.forward * Time.deltaTime * rotationThisFrame);
         rb.freezeRotation = false;
         rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezePositionZ;
-        
+
     }
 
-    
+
+    public static IEnumerator FadeOut(AudioSource audioSource, float FadeTime)
+    {
+        float startVolume = audioSource.volume;
+
+        while (audioSource.volume > 0)
+        {
+            audioSource.volume -= startVolume * Time.deltaTime / FadeTime;
+
+            yield return null;
+        }
+
+
+        audioSource.volume = startVolume;
+    }
 
 
 
