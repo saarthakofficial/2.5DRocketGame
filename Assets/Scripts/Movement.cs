@@ -36,28 +36,38 @@ public class Movement : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.Space))
         {
-            rb.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
-
-            audioSource.volume = 1;
-
-            if (!audioSource.isPlaying)
-            {
-
-                audioSource.PlayOneShot(mainEngine);
-            }
-            if (!mainBooster.isPlaying)
-            {
-                mainBooster.Play();
-            }
+            StartThrusting();
         }
         else
         {
-            mainBooster.Stop();
-            IEnumerator fadeSound1 = Movement.FadeOut(audioSource, 0.1f);
-            StartCoroutine(fadeSound1);
-            StopCoroutine(fadeSound1);
+            StopThrusting();
         }
 
+    }
+
+    void StopThrusting()
+    {
+        mainBooster.Stop();
+        IEnumerator fadeSound1 = Movement.FadeOut(audioSource, 0.1f);
+        StartCoroutine(fadeSound1);
+        StopCoroutine(fadeSound1);
+    }
+
+    void StartThrusting()
+    {
+        rb.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
+
+        audioSource.volume = 1;
+
+        if (!audioSource.isPlaying)
+        {
+
+            audioSource.PlayOneShot(mainEngine);
+        }
+        if (!mainBooster.isPlaying)
+        {
+            mainBooster.Play();
+        }
     }
 
     void ProcessRotation()

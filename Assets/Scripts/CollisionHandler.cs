@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class CollisionHandler : MonoBehaviour
 {
-    [SerializeField] float levelDelay = 1f;
+    [SerializeField] float levelDelay = 1.3f;
     [SerializeField] AudioClip winSound;
     [SerializeField] AudioClip crashSound;
     [SerializeField] ParticleSystem winParticles;
@@ -49,10 +49,22 @@ public class CollisionHandler : MonoBehaviour
         audioSource.volume = 1f;
         audioSource.PlayOneShot(winSound);
         GetComponent<Movement>().enabled = false;
+        Invoke("DisappearRocket",0.03f);
         Invoke("NextLevel", levelDelay);
     }
     void StartCrashSequence()
     {
+        DisappearRocket();
+        crashParticles.Play();
+        audioSource.Stop();
+        audioSource.volume = 1f;
+        audioSource.PlayOneShot(crashSound);
+        GetComponent<Movement>().enabled = false;
+        Invoke("ReloadLevel", levelDelay);
+
+    }
+
+    void DisappearRocket(){
         transform.Find("SpaceRocket").GetComponent<MeshRenderer>().enabled = false;
         transform.Find("SpaceRocket").transform.Find("Flap1").GetComponent<MeshRenderer>().enabled = false;
         transform.Find("SpaceRocket").transform.Find("Flap2").GetComponent<MeshRenderer>().enabled = false;
@@ -61,13 +73,6 @@ public class CollisionHandler : MonoBehaviour
         transform.Find("Main Booster").gameObject.SetActive(false);
         transform.Find("Left Booster").gameObject.SetActive(false);
         transform.Find("Right Booster").gameObject.SetActive(false);
-        crashParticles.Play();
-        audioSource.Stop();
-        audioSource.volume = 1f;
-        audioSource.PlayOneShot(crashSound);
-        GetComponent<Movement>().enabled = false;
-        Invoke("ReloadLevel", levelDelay);
-
     }
     void ReloadLevel()
     {
