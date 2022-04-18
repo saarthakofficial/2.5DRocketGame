@@ -35,6 +35,9 @@ public class CollisionHandler : MonoBehaviour
                 isTransitioning = true;
                 StartWinSequence();
                 break;
+            case "Checkpoint":
+                MarkCheckpoint();
+                break;
             default:
                 isTransitioning = true;
                 StartCrashSequence();
@@ -44,6 +47,7 @@ public class CollisionHandler : MonoBehaviour
     }
     void StartWinSequence()
     {
+        IntroFader.LevelChange = true;
         winParticles.Play();
         audioSource.Stop();
         audioSource.volume = 1f;
@@ -79,8 +83,9 @@ public class CollisionHandler : MonoBehaviour
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(currentSceneIndex);
     }
-    void NextLevel()
+    public void NextLevel()
     {
+        Movement.checkpoint = 0;
         int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
         if (nextSceneIndex == SceneManager.sceneCountInBuildSettings)
         {
@@ -88,4 +93,11 @@ public class CollisionHandler : MonoBehaviour
         }
         SceneManager.LoadScene(nextSceneIndex);
     }
+
+    void MarkCheckpoint(){
+        Movement.checkpoint = 1;
+        GameObject.Find("Checkpoint 1 Light").GetComponent<Light>().color = new Color(0f/255f,100f/255f,255f/255f);
+        
+    }
+
 }

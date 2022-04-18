@@ -1,13 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class Movement : MonoBehaviour
 {
     // Start is called before the first frame update
 
     Rigidbody rb;
     AudioSource audioSource;
+    public static int checkpoint = 0;
+    public static Vector3 rocketPosition;
     [SerializeField] float mainThrust = 1000f;
     [SerializeField] float rotationThrust = 100f;
     [SerializeField] AudioClip mainEngine;
@@ -18,6 +20,27 @@ public class Movement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
+        switch (checkpoint){
+            case 0:
+                switch (SceneManager.GetActiveScene().buildIndex){
+                    case 0:
+                        rocketPosition = new Vector3(-4.58f, 1.324f, 0f);
+                        break;
+                    case 2:
+                        rocketPosition = new Vector3(6.28f, 1.324f, 0f);
+                        break;
+                }
+                break;
+            case 1:
+                switch (SceneManager.GetActiveScene().buildIndex){
+                    case 2:
+                        rocketPosition = new Vector3(22.3f, 1.324f, 0f);
+                        break;
+                }
+                break;
+        
+        }
+        transform.position = rocketPosition;
     }
 
     // Update is called once per frame
@@ -45,13 +68,24 @@ public class Movement : MonoBehaviour
 
     }
 
-    void StopThrusting()
+    void ProcessRotation()
     {
-        mainBooster.Stop();
-        IEnumerator fadeSound1 = Movement.FadeOut(audioSource, 0.1f);
-        StartCoroutine(fadeSound1);
-        StopCoroutine(fadeSound1);
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        {
+            RotateLeft();
+
+        }
+        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+        {
+            RotateRight();
+
+        }
+        else
+        {
+            StopRotating();
+        }
     }
+
 
     void StartThrusting()
     {
@@ -70,31 +104,39 @@ public class Movement : MonoBehaviour
         }
     }
 
-    void ProcessRotation()
+    void StopThrusting()
     {
-        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        mainBooster.Stop();
+        IEnumerator fadeSound1 = Movement.FadeOut(audioSource, 0.1f);
+        StartCoroutine(fadeSound1);
+        StopCoroutine(fadeSound1);
+    }
+
+    void RotateLeft()
+    {
+        ApplyRotation(rotationThrust);
+        if (!leftBooster.isPlaying)
         {
-            ApplyRotation(rotationThrust);
-            if (!leftBooster.isPlaying)
-            {
-                leftBooster.Play();
-            }
-            
-        }
-        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
-        {
-            ApplyRotation(-rotationThrust);
-            if (!rightBooster.isPlaying)
-            {
-                rightBooster.Play();
-            }
-            
-        }
-        else{
-            leftBooster.Stop();
-            rightBooster.Stop();
+            leftBooster.Play();
         }
     }
+
+    void RotateRight()
+    {
+        ApplyRotation(-rotationThrust);
+        if (!rightBooster.isPlaying)
+        {
+            rightBooster.Play();
+        }
+    }
+
+
+    void StopRotating()
+    {
+        leftBooster.Stop();
+        rightBooster.Stop();
+    }
+
 
     void ApplyRotation(float rotationThisFrame)
     {
