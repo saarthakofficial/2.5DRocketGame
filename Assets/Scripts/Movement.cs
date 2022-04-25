@@ -23,21 +23,25 @@ public class Movement : MonoBehaviour
         switch (checkpoint){
             case 0:
                 switch (SceneManager.GetActiveScene().buildIndex){
-                    case 0:
+                    case 2:
                         rocketPosition = new Vector3(-4.58f, 1.324f, 0f);
                         break;
-                    case 2:
+                    case 4:
                         rocketPosition = new Vector3(6.28f, 1.324f, 0f);
+                        break;
+                    case 6:
+                        rocketPosition = new Vector3(-11.93f,1.324f,0f);
                         break;
                 }
                 break;
             case 1:
                 switch (SceneManager.GetActiveScene().buildIndex){
-                    case 2:
+                    case 4:
                         rocketPosition = new Vector3(22.3f, 1.324f, 0f);
                         break;
                 }
                 break;
+            
         
         }
         transform.position = rocketPosition;

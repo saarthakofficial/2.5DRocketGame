@@ -28,7 +28,7 @@ public class IntroFader : MonoBehaviour
     {
         if (LevelChange==true){
             
-
+  
             Invoke("FadingCanvas",1f);
             Invoke("EnableMovement",3f);
         }
