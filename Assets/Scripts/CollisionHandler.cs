@@ -95,9 +95,21 @@ public class CollisionHandler : MonoBehaviour
     }
 
     void MarkCheckpoint(){
-        Movement.checkpoint = 1;
-        GameObject.Find("Checkpoint 1 Light").GetComponent<Light>().color = new Color(0f/255f,100f/255f,255f/255f);
         
+        GameObject.Find("Checkpoint 1 Light").GetComponent<Light>().color = new Color(0f/255f,100f/255f,255f/255f);
+        if (Movement.checkpoint != 1){
+        audioSource.Stop();
+        audioSource.volume = 1f;
+        audioSource.PlayOneShot(winSound);
+        GameObject.Find("CheckpointText").GetComponent<MeshRenderer>().enabled = true;
+        Invoke("RemoveCheckText", 3f);
+        }
+        Movement.checkpoint = 1;
+        
+    }
+
+    void RemoveCheckText(){
+        GameObject.Find("CheckpointText").GetComponent<MeshRenderer>().enabled = false;
     }
 
 }

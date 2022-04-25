@@ -39,6 +39,9 @@ public class Movement : MonoBehaviour
                     case 4:
                         rocketPosition = new Vector3(22.3f, 1.324f, 0f);
                         break;
+                    case 6:
+                        rocketPosition = new Vector3(6.58f, 1.324f, 0f);
+                        break;
                 }
                 break;
             
