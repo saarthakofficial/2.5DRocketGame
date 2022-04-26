@@ -13,7 +13,7 @@ public class IntroMessage : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Invoke("StartLevel", 20f);
+        Invoke("StartLevel", 26f);
     }
 
     void StartLevel(){
